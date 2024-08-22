@@ -51,3 +51,15 @@ urls.py
 urlpatterns = [
     path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+Hoje criamos as views, views são o que o python retorna para o template. O processo é relativamente simples. 
+O que vai ser retornado vc configura no arquivo views.py. Caso vc vá retornar um template, o que e o normal, vc precisa
+criar uma pasta 'Templates' no seu projeto e criar um html lá dentro. 
+Além disso vc precisa criar uma rota para o que será exibido no arquivo 'urls.py'. 
+Fizemos tb a leitura do que está no banco para exibição no html utilizando uma linguagem própria de interpretação do python no html.
+Arquivos alterados: 
+views.py
+urls.py
+templates/cars.html
+
+Adicionamos o arquivo .gitignore para ignorar o diretório .venv
