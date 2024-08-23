@@ -63,3 +63,50 @@ urls.py
 templates/cars.html
 
 Adicionamos o arquivo .gitignore para ignorar o diretório .venv
+
+Hoje evoluímos a view, adicionamos um base_template e um template novo. 
+Dessa forma conseguimos uma apresentação melhor. Pontos principais: 
+1. Metodo da view fazendo consultas utilizando 'query params' do http. 
+
+def cars_view(request):
+    cars = Car.objects.all().order_by('model')
+    search = request.GET.get('search')
+    if search:
+        cars = Car.objects.filter(model__icontains=search)
+    print(search)
+    return render(request, 
+                  'cars.html', 
+                  {'cars': cars})
+
+search = request.GET.get('search') = Essa linha obtém o valor que o usuário passar no search da url. 
+cars = Car.objects.filter(model__icontains=search) = Essa linha faz uma busca no banco filtrando pelo model o que estiver vindo do
+search. 'icontains' ignora camelcase mas não ignora acentuação
+
+2. Ao criar o base template coloque-o numa pasta 'templates' detnro de apps. Altere o arquivo settings pra ficar dessa forma
+...
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": ["app/templates"],
+...
+
+3. No template novo foi incluído um form que contém uma action {% url action = cars_list %}
+...
+<form method="GET" action="{% url 'cars_list' %}">
+...
+esse form envia para o servidor http, o django, uma request via GET. Com o search e a action
+A action 'cars_list' precisa ser configurada no 'urls.py' dessa forma
+path("cars/", cars_view, name='cars_list'),
+
+É como um apelido para o arquivo cars_view. Na view isso é tratado assim:
+...
+def cars_view(request): #Metodo que recebe a requisição
+    cars = Car.objects.all().order_by('model') #Carrega variavel com todos os carros ordenados pelo modelo de A-Z
+    search = request.GET.get('search') #Variavel para capturar o que vem do search. /?search='teste'... 'teste' seria capturado
+    if search:
+        cars = Car.objects.filter(model__icontains=search) #Se search contiver algo, busque por ele
+    print(search) #print meu só pra testar, desnecessário
+    return render(request,  
+                  'cars.html', 
+                  {'cars': cars}) #renderiza de volta para o usuario o resultado do que foi buscado ou não. Se nada buscado, imprime tudo
+...
