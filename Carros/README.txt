@@ -108,5 +108,72 @@ def cars_view(request): #Metodo que recebe a requisição
     print(search) #print meu só pra testar, desnecessário
     return render(request,  
                   'cars.html', 
-                  {'cars': cars}) #renderiza de volta para o usuario o resultado do que foi buscado ou não. Se nada buscado, imprime tudo
+                  {'cars': cars}) #renderiza de volta para o usuario o resultado do que foi buscado ou não. Se nada buscado, 
+                  imprime tudo
 ...
+
+Hoje avançamos com a configuração de forms e views, arquivos alterados/adicionados: base.html, urls.py, new_car.html, forms.py,
+views.py
+
+Primeiro passo foi criar essa view:
+
+
+def new_car_view(request):
+    if request.method == 'POST':
+        new_car_form = CarModelForm(request.POST, request.FILES)
+        print(request.POST)
+        if new_car_form.is_valid():
+            new_car_form.save()
+            return redirect('cars_list')
+    else:
+        new_car_form = CarModelForm()
+    return render(request, 'new_car.html', {'new_car_form': new_car_form})
+
+
+Se o que vier do form for 'POST' eu passo tudo para o CarModelForm; 
+Esse metodo 'isValid' valida tudo usando os 'def' que começam com 'clean' no arquivo forms.py;
+
+O arquivo new_car.html:
+
+{% extends "base.html" %}
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <table>
+            {% csrf_token %}
+            {{ new_car_form.as_table }}
+        </table>
+        <input type="submit" value="Cadastrar">
+    </form>
+{% endblock %}
+
+herda o base.html;
+cria um form do tipo POST;
+enctype define que o form receberá imagem e texto;
+{% csrf_token %} proteção do django contra codigo malicioso, ex: sql injection
+{{ new_car_form.as_table }} quando isso estiver dentro de uma tag table, organiza o form dentro de uma tabela.
+
+Linha adicionada em urls.py:
+path("new_car/", new_car_view, name='new_car'),
+
+arquivo forms:
+class CarModelForm(forms.ModelForm):
+    class Meta:
+        model = Car
+        fields = '__all__'
+
+Isso arqui define que meu model é do tipo Car e importa todos os campos para usar entre a view e o model salvando meus itens
+fiels = '__all__' quer dizer que quero usar todos os campos do meu model
+
+
+    def clean_value(self):
+        value = self.cleaned_data.get('value')
+        if value == 0:
+            self.add_error('value', 'Valor não pode ser zero')
+        elif value < 0:
+            self.add_error('value', 'Valor não pode ser menor que zero')
+        else:
+            return value
+        return value
+
+isso aqui são os metodos utilizados pelo metodo is_valid no arquivo de views
