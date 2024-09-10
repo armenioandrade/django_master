@@ -1,8 +1,7 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from cars.models import Car
 from django.http.response import HttpResponse
 from cars.forms import CarModelForm
@@ -19,20 +18,27 @@ class CarsListView(ListView):
         if search:
             cars = cars.filter(model__icontains=search)
         return cars
-
-        
-        
-
-class NewCarView(View):
     
-    def get(self, request):
-        new_car_form = CarModelForm()
-        return render(request, 'new_car.html', {'new_car_form': new_car_form})
     
-    def post(self, request):
-        new_car_form = CarModelForm(request.POST, request.FILES)
-        if new_car_form.is_valid():
-            new_car_form.save()
-            return redirect('cars_list')
-        return render(request, 'new_car.html', {'new_car_form': new_car_form})
+class NewCarCreateView(CreateView):
+    model = Car
+    template_name = 'new_car.html'
+    form_class = CarModelForm
+    success_url = '/cars'
+
+class CarDetailView(DetailView):
+    model = Car
+    template_name = 'car_detail.html'
+
+class CarUpdateView(UpdateView):
+    model = Car
+    form_class = CarModelForm
+    success_url = '/cars'
+    template_name = 'car_update.html'
+
+class CarDeleteView(DeleteView):
+    model = Car
+    template_name = 'car_delete.html'
+    success_url = '/cars'
+    
     

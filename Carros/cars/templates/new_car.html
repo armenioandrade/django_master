@@ -4,7 +4,7 @@
     <form method="POST" enctype="multipart/form-data">
         <table>
             {% csrf_token %}
-            {{ new_car_form.as_table }}
+            {{ form.as_table }}
         </table>
         <input type="submit" value="Cadastrar">
     </form>
