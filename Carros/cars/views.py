@@ -1,9 +1,6 @@
 from typing import Any
-from django.db.models.query import QuerySet
-from django.views import View
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from cars.models import Car
-from django.http.response import HttpResponse
 from cars.forms import CarModelForm
 
 

@@ -65,14 +65,10 @@
       text-decoration: none !important;
     }
 
-    .btn-back {
-      background-color: green;
-      text-decoration: none !important;
-    }
-
     .btn-danger:hover {
       background-color: #d2221c;
     }
+
 
     .error-message {
       color: #d9534f;
@@ -92,9 +88,11 @@
       <p><strong>Placa:</strong> {{ object.plate }}</p>
       <p><strong>Preço:</strong> R$ {{ object.value }}</p>
   </div>
-  <div class="buttons-container">
-    <a href="{% url 'car_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
-    <a href="{% url 'car_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
-    <a href="{% url 'cars_list' %}" class="btn btn-back">Voltar</a>
-  </div>
+  {% if user.is_authenticated %}
+    <div class="buttons-container">
+      <a href="{% url 'car_update' pk=object.pk %}" class="btn btn-primary">Editar</a>
+      <a href="{% url 'car_delete' pk=object.pk %}" class="btn btn-danger">Deletar</a>
+      <a href="{% url 'cars_list' %}" class="btn btn-primary">Voltar</a>
+    </div>
+  {% endif %}
 {% endblock %}
